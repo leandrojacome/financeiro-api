@@ -21,43 +21,43 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.leandrojacome.financeiro.event.RecursoCriadoEvent;
-import com.github.leandrojacome.financeiro.model.Categoria;
-import com.github.leandrojacome.financeiro.repository.CategoriaRepository;
+import com.github.leandrojacome.financeiro.model.Pessoa;
+import com.github.leandrojacome.financeiro.repository.PessoaRepository;
 
 @RestController
-@RequestMapping("categorias")
-public class CategoriaResource {
+@RequestMapping("pessoa")
+public class PessoaResource {
 
     @Autowired
-    private CategoriaRepository categoriaRepository;
+    private PessoaRepository pessoaRepository;
     
     @Autowired
     private ApplicationEventPublisher publisher;
 
     @GetMapping
-    public List<Categoria> listar() {
-        return categoriaRepository.findAll();
+    public List<Pessoa> listar() {
+        return pessoaRepository.findAll();
     }
 
     @PostMapping
-    public ResponseEntity<Categoria> cria(@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
-        Categoria categoriaSalva = categoriaRepository.save(categoria);
+    public ResponseEntity<Pessoa> cria(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
+        Pessoa pessoaSalva = pessoaRepository.save(pessoa);
         
-        publisher.publishEvent(new RecursoCriadoEvent(this, response, categoriaSalva.getId()));
+        publisher.publishEvent(new RecursoCriadoEvent(this, response, pessoaSalva.getId()));
         
-        return ResponseEntity.status(HttpStatus.CREATED).body(categoriaSalva);
+        return ResponseEntity.status(HttpStatus.CREATED).body(pessoaSalva);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<?> buscarPeloId(@PathVariable Long id) {
-        Categoria categoria = categoriaRepository.findOne(id);
-        return nonNull(categoria) ? ResponseEntity.ok(categoria) : ResponseEntity.notFound().build();
+        Pessoa pessoa = pessoaRepository.findOne(id);
+        return nonNull(pessoa) ? ResponseEntity.ok(pessoa) : ResponseEntity.notFound().build();
     }
     
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long id) {
-		categoriaRepository.delete(id);
+    	pessoaRepository.delete(id);
 	}
 
 }
